@@ -33,4 +33,9 @@ public class UserController {
     public ResponseEntity<Object> updateUser (@RequestBody User user){
         return userService.updateUser(user);
     }
+    @PostMapping( "/test")
+    public String welcome()
+    {
+        return "Welcome from secure endpoint";
+    }
 }
