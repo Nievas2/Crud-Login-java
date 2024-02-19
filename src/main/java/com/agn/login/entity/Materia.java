@@ -24,9 +24,4 @@ public class Materia {
     @JsonIgnore
     private User user;
 
-    public Materia(String name, String cantAlum, User user) {
-        this.name = name;
-        this.cantAlum = cantAlum;
-        this.user = user;
-    }
 }

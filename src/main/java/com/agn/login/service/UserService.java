@@ -60,7 +60,7 @@ public class UserService {
     }
 
     public ResponseEntity<?> createUser(UserDto userDto) throws URISyntaxException {
-        Optional<User> res = userRepository.findUserByEmail(userDto.getEmail());
+        Optional<User> res = userRepository.findUserByUsername(userDto.getUsername());
         if (res.isPresent()) {
             return ResponseEntity.badRequest().build();
         }

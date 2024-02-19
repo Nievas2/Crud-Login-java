@@ -1,14 +1,12 @@
 package com.agn.login.controller;
 
 import com.agn.login.controller.dto.MateriaDto;
-import com.agn.login.entity.Materia;
 import com.agn.login.service.MateriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
-import java.util.List;
 
 
 @RestController

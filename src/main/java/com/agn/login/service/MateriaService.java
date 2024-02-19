@@ -4,7 +4,6 @@ import com.agn.login.controller.dto.MateriaDto;
 import com.agn.login.entity.Materia;
 import com.agn.login.repository.MateriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -71,13 +70,12 @@ public class MateriaService {
         if (res.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Materia materia = res.get();
         materiaRepository.save(Materia.builder()
-                .id(materia.getId())
-                .name(materia.getName())
-                .cantAlum(materia.getCantAlum())
-                .user(materia.getUser())
+                .id(materiaDto.getId())
+                .name(materiaDto.getName())
+                .cantAlum(materiaDto.getCantAlum())
+                .user(materiaDto.getUser())
                 .build());
-        return ResponseEntity.ok(materia);
+        return ResponseEntity.ok(materiaDto);
     }
 }
