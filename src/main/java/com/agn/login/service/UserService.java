@@ -1,12 +1,14 @@
 package com.agn.login.service;
 
+import com.agn.login.controller.dto.UserDto;
 import com.agn.login.entity.User;
 import com.agn.login.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,46 +22,76 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public ResponseEntity<?> getUsers() {
+        List<UserDto> userDtoList = userRepository.findAll()
+                .stream()
+                .map(user -> UserDto.builder()
+                        .id(user.getId())
+                        .firstName(user.getFirstName())
+                        .lastName(user.getLastName())
+                        .username(user.getUsername())
+                        .email(user.getEmail())
+                        .password(user.getPassword())
+                        .role(user.getRole())
+                        .materias(user.getMaterias())
+                        .build()).toList();
+        return ResponseEntity.ok(userDtoList);
     }
 
-    public ResponseEntity<Object> getUser(Long id) {
+    public ResponseEntity<?> getUser(Long id) {
         Optional<User> res = userRepository.findUserById(id);
-        if (res.isPresent()) {
-            Optional<User> user = userRepository.findById(id);
-            return new ResponseEntity<>(
-                    user,
-                    HttpStatus.OK
-            );
-
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    public ResponseEntity<Object> createUser(User user) {
-        Optional<User> res = userRepository.findUserByEmail(user.getEmail());
         if (res.isEmpty()) {
-            userRepository.save(user);
-            return new ResponseEntity<>(
-                    user,
-                    HttpStatus.OK
-            );
-        } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return ResponseEntity.notFound().build();
+
         }
+        User user = res.get();
+        UserDto userDto = UserDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .materias(user.getMaterias())
+                .build();
+        return ResponseEntity.ok(userDto);
+
     }
-    public ResponseEntity<Object> updateUser(User user) {
-        Optional<User> res = userRepository.findUserById(user.getId());
+
+    public ResponseEntity<?> createUser(UserDto userDto) throws URISyntaxException {
+        Optional<User> res = userRepository.findUserByEmail(userDto.getEmail());
         if (res.isPresent()) {
-            userRepository.save(user);
-            return new ResponseEntity<>(
-                    user,
-                    HttpStatus.OK
-            );
-        } else {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return ResponseEntity.badRequest().build();
         }
+        userRepository.save(User.builder()
+                .firstName(userDto.getFirstName())
+                .lastName(userDto.getLastName())
+                .username(userDto.getUsername())
+                .email(userDto.getEmail())
+                .password(userDto.getPassword())
+                .role(userDto.getRole())
+                .materias(userDto.getMaterias())
+                .build());
+        return ResponseEntity.created(new URI("/user")).build();
     }
+
+    public ResponseEntity<?> updateUser(UserDto userDto) {
+        Optional<User> res = userRepository.findUserById(userDto.getId());
+        if (res.isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        User user = res.get();
+        userRepository.save(User.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .role(user.getRole())
+                .materias(user.getMaterias())
+                .build());
+        return ResponseEntity.ok(user);
+    }
+
 }

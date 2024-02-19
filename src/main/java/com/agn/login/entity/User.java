@@ -30,6 +30,8 @@ public class User implements UserDetails{
     private String email;
     String password;
     Role role;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Materia> materias;
 
 
     @Override
